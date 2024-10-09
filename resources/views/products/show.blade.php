@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body style="background: lightgray">
-
     <div class="container mt-5 mb-5">
         <div class="row">
             <div class="col-md-4">
@@ -24,9 +23,7 @@
                         <h3>{{ $product->title }}</h3>
                         <hr/>
                         <p>{{ "Rp " . number_format($product->price,2,',','.') }}</p>
-                        <code>
-                            <p>{!! $product->description !!}</p>
-                        </code>
+                        <p>{!! $product->description !!}</p>
                         <hr/>
                         <p>Stock : {{ $product->stock }}</p>
                     </div>
@@ -34,7 +31,6 @@
             </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

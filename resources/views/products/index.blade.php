@@ -4,70 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Data Products - SantriKoding.com</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Data Products</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body style="background: lightgray">
+<body class="bg-gray-200">
+    <div class="container max-w-6xl mx-auto p-6">
+        <div class="text-center">
+            <h3 class="text-3xl font-bold text-white bg-red-700 p-3 rounded mb-4">List Produk Yang Tersedia</h3>
+        </div>
 
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-12">
-                <div>
-                    <h3 class="text-center my-4">Tutorial Laravel 11 untuk Pemula</h3>
-                    <h5 class="text-center"><a href="https://santrikoding.com">www.santrikoding.com</a></h5>
-                    <hr>
-                </div>
-                <div class="card border-0 shadow-sm rounded">
-                    <div class="card-body">
-                        <a href="{{ route('products.create') }}" class="btn btn-md btn-success mb-3">ADD PRODUCT</a>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th scope="col">IMAGE</th>
-                                    <th scope="col">TITLE</th>
-                                    <th scope="col">PRICE</th>
-                                    <th scope="col">STOCK</th>
-                                    <th scope="col" style="width: 20%">ACTIONS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($products as $product)
-                                    <tr>
-                                        <td class="text-center">
-                                            <img src="{{ asset('/storage/products/'.$product->image) }}" class="rounded" style="width: 150px">
-                                        </td>
-                                        <td>{{ $product->title }}</td>
-                                        <td>{{ "Rp " . number_format($product->price,2,',','.') }}</td>
-                                        <td>{{ $product->stock }}</td>
-                                        <td class="text-center">
-                                            <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('products.destroy', $product->id) }}" method="POST">
-                                                <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-dark">SHOW</a>
-                                                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-primary">EDIT</a>
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">HAPUS</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <div class="alert alert-danger">
-                                        Data Products belum Tersedia.
-                                    </div>
-                                @endforelse
-                            </tbody>
-                        </table>
-                        {{ $products->links() }}
+        <div class="bg-white shadow-lg rounded-lg p-6 flex">
+            <!-- Bagian Kiri: Daftar Produk -->
+            <div class="w-1/3 p-4 border-r">
+                @foreach($products as $product)
+                    <div class="card mb-4 cursor-pointer hover:bg-gray-100 border rounded p-4" onclick="loadProductDetail('{{ route('products.show', $product->id) }}')">
+                        <img src="{{ asset('/storage/products/'.$product->image) }}" class="rounded w-full h-48 object-cover">
+                        <h4 class="mt-2 text-lg font-semibold">{{ $product->title }}</h4>
+                        <p>{{ "Rp " . number_format($product->price,2,',','.') }}</p>
                     </div>
-                </div>
+                @endforeach
+            </div>
+
+            <!-- Bagian Kanan: Detail Produk -->
+            <div class="w-2/3 p-4" id="product-detail">
+                <p>Pilih produk dari daftar di sebelah kiri untuk melihat detail.</p>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        //message with sweetalert
+        // Fungsi untuk memuat detail produk secara dinamis
+        function loadProductDetail(url) {
+            console.log("Memuat detail produk dari URL: " + url); // Cek URL
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('product-detail').innerHTML = data;
+                });
+        }
+
+
         @if(session('success'))
             Swal.fire({
                 icon: "success",
@@ -85,8 +63,6 @@
                 timer: 2000
             });
         @endif
-
     </script>
-
 </body>
 </html>

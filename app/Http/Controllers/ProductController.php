@@ -14,6 +14,7 @@ use Illuminate\Http\RedirectResponse;
 //import Http Request
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -24,10 +25,7 @@ class ProductController extends Controller
      */
     public function index(): View
     {
-        //get all products
-        $products = Product::latest()->paginate(10);
-
-        //render view with products
+        $products = Product::all();
         return view('products.index', compact('products'));
     }
 
@@ -53,9 +51,9 @@ class ProductController extends Controller
         $request->validate([
             'image'         => 'required|image|mimes:jpeg,jpg,png|max:2048',
             'title'         => 'required|min:5',
-            'description'   => 'required|min:10',
-            'price'         => 'required|numeric',
-            'stock'         => 'required|numeric'
+            'editor'        => 'required|min:10',
+            'price'         => 'required|numeric|min:1',
+            'stock'         => 'required|numeric|min:1'
         ]);
 
         //upload image
@@ -66,7 +64,7 @@ class ProductController extends Controller
         Product::create([
             'image'         => $image->hashName(),
             'title'         => $request->title,
-            'description'   => $request->description,
+            'description'   => $request->editor,
             'price'         => $request->price,
             'stock'         => $request->stock
         ]);
@@ -78,29 +76,23 @@ class ProductController extends Controller
     /**
      * show
      *
-     * @param  mixed $id
+     * @param  Product $product
      * @return View
      */
-    public function show(string $id): View
+    public function show(Product $product): View
     {
-        //get product by ID
-        $product = Product::findOrFail($id);
-
-        //render view with product
+        // Mengirimkan produk ke view
         return view('products.show', compact('product'));
     }
 
     /**
      * edit
      *
-     * @param  mixed $id
+     * @param  Product $product
      * @return View
      */
-    public function edit(string $id): View
+    public function edit(Product $product): View
     {
-        //get product by ID
-        $product = Product::findOrFail($id);
-
         //render view with product
         return view('products.edit', compact('product'));
     }
@@ -109,29 +101,31 @@ class ProductController extends Controller
      * update
      *
      * @param  mixed $request
-     * @param  mixed $id
+     * @param  Product $product
      * @return RedirectResponse
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, Product $product): RedirectResponse
     {
         //validate form
         $request->validate([
             'image'         => 'image|mimes:jpeg,jpg,png|max:2048',
             'title'         => 'required|min:5',
-            'description'   => 'required|min:10',
-            'price'         => 'required|numeric',
-            'stock'         => 'required|numeric'
+            'editor'        => 'required|min:10',
+            'price'         => 'required|numeric|min:1',
+            'stock'         => 'required|numeric|min:1'
         ]);
-
-        //get product by ID
-        $product = Product::findOrFail($id);
 
         //check if image is uploaded
         if ($request->hasFile('image')) {
 
-            //upload new image
+            //upload image
             $image = $request->file('image');
-            $image->storeAs('public/products', $image->hashName());
+
+            if ($image && $image->isValid()) {
+                $image->storeAs('public/products', $image->hashName());
+            } else {
+                return back()->withErrors(['image' => 'Gambar tidak valid atau gagal diupload!']);
+            }
 
             //delete old image
             Storage::delete('public/products/' . $product->image);
@@ -140,16 +134,15 @@ class ProductController extends Controller
             $product->update([
                 'image'         => $image->hashName(),
                 'title'         => $request->title,
-                'description'   => $request->description,
+                'description'   => $request->editor,
                 'price'         => $request->price,
                 'stock'         => $request->stock
             ]);
         } else {
-
             //update product without image
             $product->update([
                 'title'         => $request->title,
-                'description'   => $request->description,
+                'description'   => $request->editor,
                 'price'         => $request->price,
                 'stock'         => $request->stock
             ]);
@@ -162,14 +155,11 @@ class ProductController extends Controller
     /**
      * destroy
      *
-     * @param  mixed $id
+     * @param  Product $product
      * @return RedirectResponse
      */
-    public function destroy($id): RedirectResponse
+    public function destroy(Product $product): RedirectResponse
     {
-        //get product by ID
-        $product = Product::findOrFail($id);
-
         //delete image
         Storage::delete('public/products/' . $product->image);
 
@@ -178,5 +168,27 @@ class ProductController extends Controller
 
         //redirect to index
         return redirect()->route('products.index')->with(['success' => 'Data Berhasil Dihapus!']);
+    }
+
+    /**
+     * validateProduct
+     *
+     * @param  Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function validateProduct(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|min:5',
+            'description' => 'required|min:10',
+            'price' => 'required|numeric|min:1',
+            'stock' => 'required|numeric|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()]);
+        }
+
+        return response()->json(['success' => 'Valid']);
     }
 }

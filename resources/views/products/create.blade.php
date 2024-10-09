@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Add New Products - SantriKoding.com</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.ckeditor.com/ckeditor5/34.0.0/classic/ckeditor.js"></script>
 </head>
 <body style="background: lightgray">
 
@@ -44,7 +45,7 @@
 
                             <div class="form-group mb-3">
                                 <label class="font-weight-bold">DESCRIPTION</label>
-                                <textarea class="form-control @error('description') is-invalid @enderror" name="description" id="description" rows="5" placeholder="Masukkan Description Product">{{ old('description') }}</textarea>
+                                <textarea class="form-control @error('description') is-invalid @enderror" name="editor" id="editor" rows="7" placeholder="Masukkan Description Product">{{ old('description') }}</textarea>
                             
                                 <!-- error message untuk description -->
                                 @error('description')
@@ -94,9 +95,20 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.ckeditor.com/4.25.0-lts/standard/ckeditor.js"></script>
     <script>
-        CKEDITOR.replace( 'description' );
+        ClassicEditor
+            .create(document.querySelector('textarea'), {
+                ckfinder: {
+                    uploadUrl: '{{ route('upload.image') }}?_token={{ csrf_token() }}'
+                }
+            })
+            .then(editor => {
+                console.log('Editor was initialized', editor);
+            })
+            .catch(error => {
+                console.error('Error during initialization of the editor', error);
+            });
     </script>
+    
 </body>
 </html>
