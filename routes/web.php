@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -8,18 +9,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 // Route untuk daftar produk (bisa diakses tanpa login)
-Route::get('/', [ProductController::class, 'index'])->name('products.index');     // Daftar produk
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/', [HomeController::class, 'index'])->name('products.index');
 
 // Rute yang memerlukan autentikasi (hanya bisa diakses jika user sudah login)
 Route::middleware('auth')->group(function () {
     // Rute untuk produk yang lebih spesifik harus di atas rute dinamis
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/products/create', [ProductController::class, 'create'])->name('products.create'); // Formulir produk baru
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');        // Simpan produk baru
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit'); // Formulir edit produk
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update'); // Perbarui produk
     Route::patch('/products/{product}', [ProductController::class, 'update'])->name('products.update'); // Perbarui produk
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy'); // Hapus produk
+    Route::get('/products/detail/{product}', [ProductController::class, 'detail'])->name('products.detail');   // Tampilkan produk
 });
 
 Route::get('/admin', function () {

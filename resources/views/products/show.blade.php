@@ -4,33 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Show Products - SantriKoding.com</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Show Products</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body style="background: lightgray">
-    <div class="container mt-5 mb-5">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm rounded">
-                    <div class="card-body">
-                        <img src="{{ asset('/storage/products/'.$product->image) }}" class="rounded" style="width: 100%">
-                    </div>
-                </div>
+<body>
+    <div class="mx-auto">
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <img src="{{ asset('/storage/products/'.$product->image) }}" class="rounded h-20 object-cover mb-4">
+            <h3 class="text-2xl font-semibold mb-4">{{ $product->title }}</h3>
+            <hr class="mb-4"/>
+            <div class="flex mb-4 gap-4">
+
+                <!-- Tombol Beli Sekarang -->
+                <a href="#beli" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+                    Beli Sekarang
+                </a>
+                
+                <!-- Tombol Bagikan -->
+                <a href="#bagikan" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition">
+                    Bagikan
+                </a>
             </div>
-            <div class="col-md-8">
-                <div class="card border-0 shadow-sm rounded">
-                    <div class="card-body">
-                        <h3>{{ $product->title }}</h3>
-                        <hr/>
-                        <p>{{ "Rp " . number_format($product->price,2,',','.') }}</p>
-                        <p>{!! $product->description !!}</p>
-                        <hr/>
-                        <p>Stock : {{ $product->stock }}</p>
-                    </div>
-                </div>
-            </div>
+            <hr class="mb-4"/>
+            <p class="text-xl font-semibold text-gray-700">{{ "Rp " . number_format($product->price, 2, ',', '.') }}</p>
+            <p class="text-gray-600 mb-4">{!! $product->description !!}</p>
+            <hr class="mb-4"/>
+            <p class="text-sm text-gray-500">Stock: {{ $product->stock }}</p>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

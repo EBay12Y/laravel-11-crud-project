@@ -6,9 +6,13 @@ use App\Models\Product;
 
 class DashboardController extends Controller
 {
+    /**
+     * index
+     *
+     * @return void
+     */
     public function index()
     {
-        // Mengambil data produk, bisa menggunakan pagination juga
         $products = Product::latest()->paginate(10);
 
         // Mengirim data produk ke view dashboard
