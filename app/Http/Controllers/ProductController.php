@@ -25,7 +25,7 @@ class ProductController extends Controller
      */
     public function index(): View
     {
-        $products = Product::all();
+        $products = Product::latest()->paginate(10);
         return view('products.index', compact('products'));
     }
 
@@ -83,6 +83,18 @@ class ProductController extends Controller
     {
         // Mengirimkan produk ke view
         return view('products.show', compact('product'));
+    }
+
+    /**
+     * detail
+     *
+     * @param  Product $product
+     * @return View
+     */
+    public function detail(Product $product): View
+    {
+        // Mengirimkan produk ke view
+        return view('products.detail', compact('product'));
     }
 
     /**

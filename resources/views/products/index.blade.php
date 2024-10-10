@@ -1,68 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Data Products</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-200">
-    <div class="container max-w-6xl mx-auto p-6">
-        <div class="text-center">
-            <h3 class="text-3xl font-bold text-white bg-red-700 p-3 rounded mb-4">List Produk Yang Tersedia</h3>
-        </div>
+<x-app-layout>
+    {{-- <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Dashboard') }}
+        </h2>
+    </x-slot> --}}
 
-        <div class="bg-white shadow-lg rounded-lg p-6 flex">
-            <!-- Bagian Kiri: Daftar Produk -->
-            <div class="w-1/3 p-4 border-r">
-                @foreach($products as $product)
-                    <div class="card mb-4 cursor-pointer hover:bg-gray-100 border rounded p-4" onclick="loadProductDetail('{{ route('products.show', $product->id) }}')">
-                        <img src="{{ asset('/storage/products/'.$product->image) }}" class="rounded w-full h-48 object-cover">
-                        <h4 class="mt-2 text-lg font-semibold">{{ $product->title }}</h4>
-                        <p>{{ "Rp " . number_format($product->price,2,',','.') }}</p>
+    <div class="py-6">
+        <div class="max-w-full mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="container mx-auto p-6">
+                    <div class="text-center">
+                        <h3 class="text-3xl font-bold text-white bg-red-700 p-3 rounded mb-4">Dashboard Kelola Semua Produk</h3>
                     </div>
-                @endforeach
-            </div>
-
-            <!-- Bagian Kanan: Detail Produk -->
-            <div class="w-2/3 p-4" id="product-detail">
-                <p>Pilih produk dari daftar di sebelah kiri untuk melihat detail.</p>
+            
+                    <div class="bg-white shadow-lg rounded-lg p-6">
+                        <a href="{{ route('products.create') }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mb-4 inline-block">ADD PRODUCT</a>
+            
+                        <table class="min-w-full table-auto">
+                            <thead>
+                                <tr class="text-left bg-gray-100">
+                                    <th class="px-4 py-2">IMAGE</th>
+                                    <th class="px-4 py-2">TITLE</th>
+                                    <th class="px-4 py-2">PRICE</th>
+                                    <th class="px-4 py-2">STOCK</th>
+                                    <th class="px-4 py-2">ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($products as $product)
+                                <tr class="border-t hover:bg-gray-100">
+                                        <td class="px-4 py-2 text-center" onclick="window.location='{{ route('products.detail', $product->id) }}'" style="cursor: pointer;">
+                                            <img src="{{ asset('/storage/products/'.$product->image) }}" class="rounded" style="width: 150px">
+                                        </td>
+                                        <td class="px-4 py-2" onclick="window.location='{{ route('products.detail', $product->id) }}'" style="cursor: pointer;">{{ $product->title }}</td>
+                                        <td class="px-4 py-2" onclick="window.location='{{ route('products.detail', $product->id) }}'" style="cursor: pointer;">{{ "Rp " . number_format($product->price,2,',','.') }}</td>
+                                        <td class="px-4 py-2" onclick="window.location='{{ route('products.detail', $product->id) }}'" style="cursor: pointer;">{{ $product->stock }}</td>
+                                        <td class="px-4 py-2">
+                                            <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('products.destroy', $product->id) }}" method="POST">
+                                                <a href="{{ route('products.edit', $product->id) }}" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">EDIT</a>
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">HAPUS</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="px-4 py-2 text-center text-red-500">Data Products belum Tersedia.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+            
+                        <!-- Pagination -->
+                        <div class="mt-4">
+                            {{ $products->links() }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        // Fungsi untuk memuat detail produk secara dinamis
-        function loadProductDetail(url) {
-            console.log("Memuat detail produk dari URL: " + url); // Cek URL
-            fetch(url)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('product-detail').innerHTML = data;
-                });
-        }
-
-
-        @if(session('success'))
-            Swal.fire({
-                icon: "success",
-                title: "BERHASIL",
-                text: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 2000
-            });
-        @elseif(session('error'))
-            Swal.fire({
-                icon: "error",
-                title: "GAGAL!",
-                text: "{{ session('error') }}",
-                showConfirmButton: false,
-                timer: 2000
-            });
-        @endif
-    </script>
-</body>
-</html>
+</x-app-layout>

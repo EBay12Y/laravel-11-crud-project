@@ -1,16 +1,16 @@
 <x-app-layout>
-    <x-slot name="header">
+    {{-- <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
         </h2>
-    </x-slot>
+    </x-slot> --}}
 
-    <div class="py-12">
+    <div class="py-6">
         <div class="max-w-full mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="container mx-auto p-6">
                     <div class="text-center">
-                        <h3 class="text-3xl font-bold text-white bg-red-700 p-3 rounded mb-4">Admin Kelola Produk</h3>
+                        <h3 class="text-3xl font-bold text-white bg-red-700 p-3 rounded mb-4">Dashboard Kelola Semua Produk</h3>
                     </div>
             
                     <div class="bg-white shadow-lg rounded-lg p-6">
@@ -28,7 +28,7 @@
                             </thead>
                             <tbody>
                                 @forelse ($products as $product)
-                                <tr class="border-t hover:bg-gray-100" onclick="window.location='{{ route('products.show', $product->id) }}'" style="cursor: pointer;">
+                                <tr class="border-t hover:bg-gray-100" onclick="window.location='{{ route('products.detail', $product->id) }}'" style="cursor: pointer;">
                                         <td class="px-4 py-2 text-center">
                                             <img src="{{ asset('/storage/products/'.$product->image) }}" class="rounded" style="width: 150px">
                                         </td>
